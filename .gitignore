@@ -1,0 +1,38 @@
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── Build / dist ───────────────────────────────────────────────────────────────
+build/
+dist/
+*.whl
+*.tar.gz
+
+# ── Environnements virtuels ─────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+.python-version
+
+# ── Données tenant (NE JAMAIS committer — peut contenir des données réelles) ────
+data/
+*.jsonl
+
+# ── Secrets / config locale ─────────────────────────────────────────────────────
+.env
+.env.*
+*.key
+*.pem
+secrets.*
+
+# ── OS / éditeurs ───────────────────────────────────────────────────────────────
+.DS_Store
+.idea/
+.vscode/
+*.swp

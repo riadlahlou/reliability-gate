@@ -1,0 +1,54 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# ReliabilityGate — .dockerignore
+# Exclut les fichiers inutiles du contexte de build Docker.
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Environnement virtuel Python
+.venv/
+venv/
+env/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Git
+.git/
+.gitignore
+
+# Tests et cache pytest
+.pytest_cache/
+tests/
+htmlcov/
+.coverage
+coverage.xml
+
+# Données persistées (montées en volume en prod)
+data/
+
+# IDE et éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Documentation et fichiers non nécessaires au runtime
+*.md
+LICENSE
+demo.py
+start.sh
+.dockerignore
+Dockerfile

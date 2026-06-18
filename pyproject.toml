@@ -1,0 +1,106 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# ReliabilityGate — pyproject.toml
+# An anti-gameable permission-to-act layer for autonomous agents.
+# (Prototyped internally under the codename "Wayne Brain".)
+# ══════════════════════════════════════════════════════════════════════════════
+
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "reliability-gate"
+version = "0.1.0"
+description = "An anti-gameable permission-to-act layer for autonomous agents. Measure real reliability, abstain when unreliable."
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Riad Lahlou"},
+]
+keywords = [
+    "ai",
+    "agents",
+    "reliability",
+    "permission-to-act",
+    "abstention",
+    "calibration",
+    "llm",
+    "agent-governance",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: FastAPI",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+# ── Zéro dépendance requise ──────────────────────────────────────────────────
+# Le client (reliability_gate/) fonctionne avec la stdlib Python uniquement.
+# httpx est optionnel (fallback automatique vers urllib).
+dependencies = []
+
+
+[project.optional-dependencies]
+# Dépendances pour le serveur API (api/main.py)
+server = [
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.29.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.0.0",
+    "structlog>=24.0.0",
+]
+
+# Dépendances de développement et tests
+dev = [
+    "pytest>=8.0.0",
+    "httpx>=0.27.0",
+]
+
+
+# NOTE launch-prep : URLs PROPOSÉES (repo/nom non encore créé par Riad ; cf.
+# docs/github_repo_description.md). Aucun repo publié à ce stade.
+[project.urls]
+Homepage = "https://github.com/riadlahlou/reliability-gate"
+Documentation = "https://github.com/riadlahlou/reliability-gate#readme"
+Repository = "https://github.com/riadlahlou/reliability-gate"
+"Bug Tracker" = "https://github.com/riadlahlou/reliability-gate/issues"
+
+
+# NOTE launch-prep : l'entry-point "wayne.apps"="api.main:app" a été retiré —
+# il référençait le module `api` (exclu du wheel) et couplait le package au
+# nommage Wayne OS. Sans objet pour un SDK/client standalone.
+
+
+# ── Configuration setuptools ─────────────────────────────────────────────────
+# Le wheel public ne ship QUE le package `reliability_gate`. Le package legacy
+# `sdk` (shim déprécié) est volontairement exclu de la distribution.
+[tool.setuptools.packages.find]
+include = ["reliability_gate*"]
+exclude = ["tests*", "data*", "core*", "adapters*", "storage*", "sdk*", "api*"]
+
+
+# ── Configuration pytest ─────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-q --tb=short --strict-markers"
+markers = [
+    "slow: tests nécessitant le serveur API en cours d'exécution",
+    "integration: tests d'intégration bout-en-bout",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
