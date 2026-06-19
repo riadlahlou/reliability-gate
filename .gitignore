@@ -36,3 +36,7 @@ secrets.*
 .idea/
 .vscode/
 *.swp
+
+# ── Moteur cognitif privé (IP propriétaire — ne pas publier) ────────────────────
+core/
+adapters/
