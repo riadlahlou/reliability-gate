@@ -60,8 +60,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from storage.outcome_store import get_outcome_store
-from adapters.integrity_monitor import get_integrity_monitor
 from storage.cis_engine import compute_cis_from_outcomes, CISResult
+
+
+# ── Stub IntegrityMonitor (remplace adapters.integrity_monitor, retiré du repo public) ──
+class _IntegrityMonitorStub:
+    """Stub léger : log les observations sans dépendance sur le module privé."""
+    def observe(self, **kwargs: Any) -> None:
+        pass  # En prod, écrire vers un sink d'observabilité
+
+_monitors: dict[str, _IntegrityMonitorStub] = {}
+def get_integrity_monitor(tenant_id: str) -> _IntegrityMonitorStub:
+    if tenant_id not in _monitors:
+        _monitors[tenant_id] = _IntegrityMonitorStub()
+    return _monitors[tenant_id]
 
 app = FastAPI(
     title="ReliabilityGate API",
@@ -275,30 +287,17 @@ async def calibrate(
 
     Note : OBSERVE-only — aucune action, aucun login, aucun POST.
     """
-    from adapters.browser_adapter import execute_browser_action
+    # browser_adapter retiré du repo public (module privé)
+    raise HTTPException(
+        status_code=501,
+        detail="/calibrate requires the full ReliabilityGate server (browser adapter not included in OSS). "
+               "Use POST /observe to submit outcomes manually.",
+    )
 
-    # Étape 1 : Prédiction neutre (prior 50 sans historique)
-    store = get_outcome_store(tenant_id)
-    agent_outcomes = [o for o in store.load_outcomes(50) if o.get("agent_id") == req.agent_id]
-
-    prior_pct = 50.0
-    if agent_outcomes:
-        recent = [o.get("actual") for o in agent_outcomes[-5:] if o.get("actual") is not None]
-        if recent:
-            prior_pct = sum(recent) / len(recent)
-
-    # Étape 2 : Observation réelle
-    t0 = time.monotonic()
-    result = execute_browser_action(action="extract", url=req.url)
-    elapsed = int((time.monotonic() - t0) * 1000)
-
-    if not result.executed:
-        return {
-            "ok": False,
-            "error": result.error,
-            "agent_id": req.agent_id,
-            "url": req.url,
-        }
+    # Code ci-dessous conservé comme référence mais non atteignable
+    if False:  # pragma: no cover
+        store = get_outcome_store(tenant_id)
+        agent_outcomes = [o for o in store.load_outcomes(50) if o.get("agent_id") == req.agent_id]
 
     # Étape 3 : Calcul du yield réel (completeness %)
     import re, math
